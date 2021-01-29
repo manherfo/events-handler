@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/HolaMundoFlask.iml" filepath="$PROJECT_DIR$/.idea/HolaMundoFlask.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../SapFlask/.idea/SapFlask.iml" filepath="$PROJECT_DIR$/../../SapFlask/.idea/SapFlask.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../.idea/fundamentos.iml" filepath="$PROJECT_DIR$/../.idea/fundamentos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../../../maestria/semestre1/soluciones cloud/proyectos/proyecto-0/.idea/proyecto-0.iml" filepath="$PROJECT_DIR$/../../../../../maestria/semestre1/soluciones cloud/proyectos/proyecto-0/.idea/proyecto-0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../../../maestria/semestre1/soluciones-cloud/proyectos/tuto-flask/.idea/tuto-flask.iml" filepath="$PROJECT_DIR$/../../../../../maestria/semestre1/soluciones-cloud/proyectos/tuto-flask/.idea/tuto-flask.iml" />
+    </modules>
+  </component>
+</project>
