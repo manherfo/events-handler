@@ -4,15 +4,79 @@ from werkzeug.utils import redirect
 from werkzeug.exceptions import abort
 
 app = Flask(__name__)
-
 app.secret_key = 'llave_secreta'
+users = [
+    {
+        "email": "a@gmail.com",
+        "name": "a",
+        "pwd": 1,
+        "events": [
+            {
+                "name": "",
+                "category": "",
+                "place": "",
+                "address": ""
+            }
+        ]
+    },
+    {
+        "email": "b@gmail.com",
+        "name": "b",
+        "pwd": 1,
+        "events": [
+            {
+                "name": "",
+                "category": "",
+                "place": "",
+                "address": ""
+            }
+        ]
+    },
+    {
+        "email": "c@gmail.com",
+        "name": "c",
+        "pwd": 1,
+        "events": [
+            {
+                "name": "",
+                "category": "",
+                "place": "",
+                "address": ""
+            }
+        ]
+    },
+    {
+        "email": "d@gmail.com",
+        "name": "d",
+        "pwd": 1,
+        "events": [
+            {
+                "name": "",
+                "category": "",
+                "place": "",
+                "address": ""
+            }
+        ]
+    }
+]
+
+
+def find_user(lista, email):
+    return lista['email'] == email
+    # lista_filtrada = []
+    # for i in lista :
+    #     print(i)
+    #     if i['email'] == email :
+    #         lista_filtrada.append(i)
+    # return lista_filtrada
 
 
 # http://localhost:5000/
 @app.route('/')
 def inicio():
     if 'username' in session:
-        return f'usuario loggeado {session["username"]}'
+        x = list(filter(lambda users_list: find_user(users_list, session["username"]), users))
+        return jsonify(x)
     return 'usuario no loggeado'
     # app.logger.debug('mensaje debug')
     app.logger.info(f'entramos al path {request.path}')
@@ -36,26 +100,6 @@ def logout():
     return redirect(url_for('inicio'))
 
 
-@app.route('/saludar/<nombre>')
-def saludar(nombre):
-    return f'Saludos {nombre}'
-
-
-@app.route('/edad/<int:age>')
-def show_age(age):
-    return f'Tu edad es: {age + 1}'
-
-
-@app.route('/mostrar/<nombre>', methods=['GET', 'POST'])
-def show_name(nombre):
-    return render_template('mostrar.html', nombre=nombre)
-
-
-@app.route('/redireccionar')
-def redireccionar():
-    return redirect(url_for('show_name', nombre='Juan'))
-
-
 @app.route('/salir')
 def salir():
     return abort(404)
@@ -66,44 +110,24 @@ def pagina_no_encontrada(error):
     return render_template('error404.html', error=error), 404
 
 
-users = [{"email": "a@gmail.com", "pwd": 1}, {"email": "b@gmail.com", "pwd": 1},
-         {"email": "c@gmail.com", "pwd": 1}, {"email": "d@gmail.com", "pwd": 1}]
-
-
-@app.route('/api/mostrar/<nombre>', methods=['GET', 'POST'])
-def mostrar_json(nombre):
-    valores = {'nombre': nombre, 'methodo_http': request.method}
-    return jsonify(users)
-
-
 @app.route('/list-users', methods=['GET', 'POST'])
 def list_users():
     global users
     return jsonify(users)
 
 
-def filtro_nombre(lista, email):
-    return lista['email'] == email
-    # lista_filtrada = []
-    # for i in lista :
-    #     print(i)
-    #     if i['email'] == email :
-    #         lista_filtrada.append(i)
-    # return lista_filtrada
-
-
 @app.route('/user-details/<email>', methods=['GET', 'POST'])
-def mostrando_json(email):
+def user_details(email):
     global users
     # valores = {'email': email, 'methodo_http': request.method}
     # users.append(email)
     # x = filtro_nombre(users, email)
-    x = list(filter(lambda item: filtro_nombre(item, email), users))
+    x = list(filter(lambda users_list: find_user(users_list, email), users))
     return jsonify(x)
 
 
-def delete_user(lista, email):
-    return lista['email'] != email
+def delete_user(users_list, email):
+    return users_list['email'] != email
 
 
 @app.route('/delete-user/<email>', methods=['GET', 'POST'])
@@ -112,7 +136,7 @@ def delete_users(email):
     # valores = {'email': email, 'methodo_http': request.method}
     # users.append(email)
     # x = filtro_nombre(users, email)
-    x = list(filter(lambda item: delete_user(item, email), users))
+    x = list(filter(lambda users_list: delete_user(users_list, email), users))
     users = x
     return jsonify(users)
 
