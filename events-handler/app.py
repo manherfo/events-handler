@@ -66,8 +66,8 @@ def pagina_no_encontrada(error):
     return render_template('error404.html', error=error), 404
 
 
-fruits = [{"corres": "j@gmail.com", "pass": 1}, {"corres": "m@gmail.com", "pass": 1},
-          {"corres": "a@gmail.com", "pass": 1}, {"corres": "b@gmail.com", "pass": 1}]
+fruits = [{"email": "a@gmail.com", "pass": 1}, {"email": "b@gmail.com", "pass": 1},
+          {"email": "c@gmail.com", "pass": 1}, {"email": "d@gmail.com", "pass": 1}]
 
 
 @app.route('/api/mostrar/<nombre>', methods=['GET', 'POST'])
@@ -77,15 +77,15 @@ def mostrar_json(nombre):
 
 
 def delete_nombre(lista, correo):
-    return lista['corres'] != correo
+    return lista['email'] != correo
 
 
 def filtro_nombre(lista, correo):
-    return lista['corres'] == correo
+    return lista['email'] == correo
     # lista_filtrada = []
     # for i in lista :
     #     print(i)
-    #     if i['corres'] == correo :
+    #     if i['email'] == correo :
     #         lista_filtrada.append(i)
     # return lista_filtrada
 
@@ -107,8 +107,8 @@ def actualizando_json(correo, pwd):
     lista_filtrada = []
     for i in fruits:
         print(i)
-        if i['corres'] == correo:
-            lista_filtrada.append({'corres': correo, 'pass': int(pwd)})
+        if i['email'] == correo:
+            lista_filtrada.append({'email': correo, 'pass': int(pwd)})
         else:
             lista_filtrada.append(i)
     fruits = lista_filtrada
