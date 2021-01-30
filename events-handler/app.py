@@ -76,16 +76,16 @@ def mostrar_json(nombre):
     return jsonify(fruits)
 
 
-def delete_nombre(lista, correo):
-    return lista['email'] != correo
+def delete_nombre(lista, email):
+    return lista['email'] != email
 
 
-def filtro_nombre(lista, correo):
-    return lista['email'] == correo
+def filtro_nombre(lista, email):
+    return lista['email'] == email
     # lista_filtrada = []
     # for i in lista :
     #     print(i)
-    #     if i['email'] == correo :
+    #     if i['email'] == email :
     #         lista_filtrada.append(i)
     # return lista_filtrada
 
@@ -96,19 +96,19 @@ def mostrando_json(nombre):
     # valores = {'nombre': nombre, 'methodo_http': request.method}
     # fruits.append(nombre)
     # x = filtro_nombre(fruits, nombre)
-    x = list(filter(lambda item: delete_nombre(item, nombre), fruits))
+    x = list(filter(lambda item: filtro_nombre(item, nombre), fruits))
     fruits = x
     return jsonify(fruits)
 
 
-@app.route('/api/actualizar/<correo>/<pwd>', methods=['GET', 'POST'])
-def actualizando_json(correo, pwd):
+@app.route('/api/actualizar/<email>/<pwd>', methods=['GET', 'POST'])
+def actualizando_json(email, pwd):
     global fruits
     lista_filtrada = []
     for i in fruits:
         print(i)
-        if i['email'] == correo:
-            lista_filtrada.append({'email': correo, 'pass': int(pwd)})
+        if i['email'] == email:
+            lista_filtrada.append({'email': email, 'pass': int(pwd)})
         else:
             lista_filtrada.append(i)
     fruits = lista_filtrada
