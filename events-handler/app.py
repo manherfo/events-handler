@@ -66,8 +66,8 @@ def pagina_no_encontrada(error):
     return render_template('error404.html', error=error), 404
 
 
-fruits = [{"email": "a@gmail.com", "pass": 1}, {"email": "b@gmail.com", "pass": 1},
-          {"email": "c@gmail.com", "pass": 1}, {"email": "d@gmail.com", "pass": 1}]
+fruits = [{"email": "a@gmail.com", "pwd": 1}, {"email": "b@gmail.com", "pwd": 1},
+          {"email": "c@gmail.com", "pwd": 1}, {"email": "d@gmail.com", "pwd": 1}]
 
 
 @app.route('/api/mostrar/<nombre>', methods=['GET', 'POST'])
@@ -108,7 +108,7 @@ def actualizando_json(email, pwd):
     for i in fruits:
         print(i)
         if i['email'] == email:
-            lista_filtrada.append({'email': email, 'pass': int(pwd)})
+            lista_filtrada.append({'email': email, 'pwd': int(pwd)})
         else:
             lista_filtrada.append(i)
     fruits = lista_filtrada
