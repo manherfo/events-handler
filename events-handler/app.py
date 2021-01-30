@@ -66,14 +66,14 @@ def pagina_no_encontrada(error):
     return render_template('error404.html', error=error), 404
 
 
-fruits = [{"email": "a@gmail.com", "pwd": 1}, {"email": "b@gmail.com", "pwd": 1},
-          {"email": "c@gmail.com", "pwd": 1}, {"email": "d@gmail.com", "pwd": 1}]
+users = [{"email": "a@gmail.com", "pwd": 1}, {"email": "b@gmail.com", "pwd": 1},
+         {"email": "c@gmail.com", "pwd": 1}, {"email": "d@gmail.com", "pwd": 1}]
 
 
 @app.route('/api/mostrar/<nombre>', methods=['GET', 'POST'])
 def mostrar_json(nombre):
     valores = {'nombre': nombre, 'methodo_http': request.method}
-    return jsonify(fruits)
+    return jsonify(users)
 
 
 def delete_nombre(lista, email):
@@ -92,24 +92,24 @@ def filtro_nombre(lista, email):
 
 @app.route('/api/mostrando/<nombre>', methods=['GET', 'POST'])
 def mostrando_json(nombre):
-    global fruits
+    global users
     # valores = {'nombre': nombre, 'methodo_http': request.method}
-    # fruits.append(nombre)
-    # x = filtro_nombre(fruits, nombre)
-    x = list(filter(lambda item: filtro_nombre(item, nombre), fruits))
-    fruits = x
-    return jsonify(fruits)
+    # users.append(nombre)
+    # x = filtro_nombre(users, nombre)
+    x = list(filter(lambda item: filtro_nombre(item, nombre), users))
+    users = x
+    return jsonify(users)
 
 
-@app.route('/api/actualizar/<email>/<pwd>', methods=['GET', 'POST'])
-def actualizando_json(email, pwd):
-    global fruits
-    lista_filtrada = []
-    for i in fruits:
+@app.route('/update-pwd/<email>/<pwd>', methods=['GET', 'POST'])
+def update_pwd(email, pwd):
+    global users
+    filtered_users = []
+    for i in users:
         print(i)
         if i['email'] == email:
-            lista_filtrada.append({'email': email, 'pwd': int(pwd)})
+            filtered_users.append({'email': email, 'pwd': pwd})
         else:
-            lista_filtrada.append(i)
-    fruits = lista_filtrada
-    return jsonify(fruits)
+            filtered_users.append(i)
+    users = filtered_users
+    return jsonify(users)
