@@ -76,8 +76,10 @@ def mostrar_json(nombre):
     return jsonify(users)
 
 
-def delete_nombre(lista, email):
-    return lista['email'] != email
+@app.route('/list-users', methods=['GET', 'POST'])
+def list_users():
+    global users
+    return jsonify(users)
 
 
 def filtro_nombre(lista, email):
@@ -90,13 +92,27 @@ def filtro_nombre(lista, email):
     # return lista_filtrada
 
 
-@app.route('/api/mostrando/<nombre>', methods=['GET', 'POST'])
-def mostrando_json(nombre):
+@app.route('/user-details/<email>', methods=['GET', 'POST'])
+def mostrando_json(email):
     global users
-    # valores = {'nombre': nombre, 'methodo_http': request.method}
-    # users.append(nombre)
-    # x = filtro_nombre(users, nombre)
-    x = list(filter(lambda item: filtro_nombre(item, nombre), users))
+    # valores = {'email': email, 'methodo_http': request.method}
+    # users.append(email)
+    # x = filtro_nombre(users, email)
+    x = list(filter(lambda item: filtro_nombre(item, email), users))
+    return jsonify(x)
+
+
+def delete_nombre(lista, email):
+    return lista['email'] != email
+
+
+@app.route('/delete-user/<email>', methods=['GET', 'POST'])
+def delete_user(email):
+    global users
+    # valores = {'email': email, 'methodo_http': request.method}
+    # users.append(email)
+    # x = filtro_nombre(users, email)
+    x = list(filter(lambda item: delete_nombre(item, email), users))
     users = x
     return jsonify(users)
 
