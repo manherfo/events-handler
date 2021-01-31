@@ -122,6 +122,15 @@ user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 
+class EventSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'category', 'place', 'address', 'user_email')
+
+
+event_schema = EventSchema()
+events_schema = EventSchema(many=True)
+
+
 @app.route('/signups/<email>/<pwd>', methods=['GET', 'POST'])
 def create_task(email, pwd):
 
@@ -137,8 +146,16 @@ def create_task(email, pwd):
 @cross_origin()
 def validate_users(email, pwd):
     user = Users.query.get(email)
-
+    db.session.query_property()
     return user_schema.jsonify(user)
+
+
+@app.route('/user-events/<email>', methods=['GET', 'POST'])
+@cross_origin()
+def user_events(email):
+    events = Events.query.filter_by(user_email=email)
+
+    return events_schema.jsonify(events)
 
 
 @app.route('/')
