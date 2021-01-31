@@ -133,6 +133,14 @@ def create_task(email, pwd):
     return user_schema.jsonify(new_user)
 
 
+@app.route('/validate-pwds/<email>/<pwd>', methods=['GET', 'POST'])
+@cross_origin()
+def validate_users(email, pwd):
+    user = Users.query.get(email)
+
+    return user_schema.jsonify(user)
+
+
 @app.route('/')
 def inicio():
     if 'username' in session:
