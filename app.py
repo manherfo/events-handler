@@ -1,14 +1,11 @@
+# print("Hola Mundo desde Python, saludos!!!")
 from flask import Flask, request, render_template, url_for, jsonify, session
 from werkzeug.utils import redirect
 from werkzeug.exceptions import abort
 from flask_cors import CORS, cross_origin
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
+
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:admin@localhost/events_handler'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = 'llave_secreta'
@@ -80,59 +77,6 @@ def find_user(lista, email):
     # return lista_filtrada
 
 
-db = SQLAlchemy(app)
-ma = Marshmallow(app)
-
-
-class Users(db.Model):
-    email = db.Column(db.String(100), primary_key=True)
-    pwd = db.Column(db.String(100), nullable=False)
-
-    def __init__(self, email, pwd):
-        self.email = email
-        self.pwd = pwd
-
-
-class Events(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    category = db.Column(db.String(100))
-    place = db.Column(db.String(100))
-    address = db.Column(db.String(100))
-    user_email = db.Column(db.String(100), db.ForeignKey('users.email'))
-
-    def __init__(self, id, name, category, place, address, user_email):
-        self.id = id
-        self.name = name
-        self.category = category
-        self.place = place
-        self.address = address
-        self.user_email = user_email
-
-
-db.create_all()
-
-
-class UserSchema(ma.Schema):
-    class Meta:
-        fields = ('email', 'pwd')
-
-
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
-
-
-@app.route('/signups/<email>/<pwd>', methods=['GET', 'POST'])
-def create_task(email, pwd):
-
-    new_user = Users(email, pwd)
-
-    db.session.add(new_user)
-    db.session.commit()
-
-    return user_schema.jsonify(new_user)
-
-
 @app.route('/')
 def inicio():
     if 'username' in session:
@@ -201,7 +145,7 @@ def validate_pwd(user, email, pwd):
 
 @app.route('/validate-pwd/<email>/<pwd>', methods=['GET', 'POST'])
 @cross_origin()
-def validate_user(email, pwd):
+def validate_user(email,pwd):
     global users
     # valores = {'email': email, 'methodo_http': request.method}
     # users.append(email)
