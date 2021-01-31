@@ -2,27 +2,35 @@
 from flask import Flask, request, render_template, url_for, jsonify, session
 from werkzeug.utils import redirect
 from werkzeug.exceptions import abort
+from flask_cors import CORS, cross_origin
+
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = 'llave_secreta'
 users = [
     {
         "email": "a@gmail.com",
-        "name": "a",
-        "pwd": 1,
+        "pwd": "1",
         "events": [
             {
-                "name": "",
-                "category": "",
-                "place": "",
-                "address": ""
+                "name": "a",
+                "category": "a",
+                "place": "a",
+                "address": "a"
+            },
+            {
+                "name": "b",
+                "category": "b",
+                "place": "b",
+                "address": "b"
             }
         ]
     },
     {
         "email": "b@gmail.com",
-        "name": "b",
-        "pwd": 1,
+        "pwd": "1",
         "events": [
             {
                 "name": "",
@@ -34,8 +42,7 @@ users = [
     },
     {
         "email": "c@gmail.com",
-        "name": "c",
-        "pwd": 1,
+        "pwd": "1",
         "events": [
             {
                 "name": "",
@@ -47,8 +54,7 @@ users = [
     },
     {
         "email": "d@gmail.com",
-        "name": "d",
-        "pwd": 1,
+        "pwd": "1",
         "events": [
             {
                 "name": "",
@@ -71,7 +77,6 @@ def find_user(lista, email):
     # return lista_filtrada
 
 
-# http://localhost:5000/
 @app.route('/')
 def inicio():
     if 'username' in session:
@@ -82,16 +87,23 @@ def inicio():
     app.logger.info(f'entramos al path {request.path}')
     # app.logger.warn('mensaje warn')
     # app.logger.error('mensaje error')
-    return 'Hello, from Flask!'
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/login/<email>', methods=['GET', 'POST'])
+def login(email):
     if request.method == 'POST':
-        usuario = request.form['username']
-        session['username'] = usuario
+        session['username'] = email
         return redirect(url_for('inicio'))
     return render_template('login.html')
+
+
+@app.route('/signup/<email>/<pwd>', methods=['GET', 'POST'])
+@cross_origin()
+def signup(email, pwd):
+    global users
+    new_user = {"email": email, "pwd": pwd, "events": []}
+    users.append(new_user)
+    return jsonify(users)
 
 
 @app.route('/logout')
@@ -117,12 +129,28 @@ def list_users():
 
 
 @app.route('/user-details/<email>', methods=['GET', 'POST'])
+@cross_origin()
 def user_details(email):
     global users
     # valores = {'email': email, 'methodo_http': request.method}
     # users.append(email)
     # x = filtro_nombre(users, email)
     x = list(filter(lambda users_list: find_user(users_list, email), users))
+    return jsonify(x)
+
+
+def validate_pwd(user, email, pwd):
+    return user['pwd'] == pwd and user['email'] == email
+
+
+@app.route('/validate-pwd/<email>/<pwd>', methods=['GET', 'POST'])
+@cross_origin()
+def validate_user(email,pwd):
+    global users
+    # valores = {'email': email, 'methodo_http': request.method}
+    # users.append(email)
+    # x = filtro_nombre(users, email)
+    x = list(filter(lambda users_list: validate_pwd(users_list, email, pwd), users))
     return jsonify(x)
 
 
@@ -136,8 +164,8 @@ def delete_users(email):
     # valores = {'email': email, 'methodo_http': request.method}
     # users.append(email)
     # x = filtro_nombre(users, email)
-    x = list(filter(lambda users_list: delete_user(users_list, email), users))
-    users = x
+    user = list(filter(lambda users_list: delete_user(users_list, email), users))
+    users = user
     return jsonify(users)
 
 
@@ -152,4 +180,5 @@ def update_pwd(email, pwd):
         else:
             filtered_users.append(i)
     users = filtered_users
-    return jsonify(users)
+    user = list(filter(lambda users_list: find_user(users_list, email), users))
+    return jsonify(user)
