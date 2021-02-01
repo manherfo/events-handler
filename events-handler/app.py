@@ -166,6 +166,22 @@ def event(id):
     return events_schema.jsonify(events)
 
 
+@app.route('/create-event/<name>/<category>/<place>/<address>/<email>', methods=['GET', 'POST'])
+@cross_origin()
+def create_event(name, category, place, address, email):
+    # SELECT events.id AS events_id
+    # FROM events ORDER BY -events.id
+    #  LIMIT %(param_1)s
+    # lastevent = Events.query.with_entities(Events.id).order_by(-Events.id).limit(1)
+    # print(lastevent.scalar())
+    new_event = Events(None, name, category, place, address, email)
+
+    db.session.add(new_event)
+    db.session.commit()
+
+    return event_schema.jsonify(lastevent)
+
+
 @app.route('/')
 def inicio():
     if 'username' in session:
