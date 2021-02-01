@@ -158,6 +158,14 @@ def user_events(email):
     return events_schema.jsonify(events)
 
 
+@app.route('/event/<id>', methods=['GET', 'POST'])
+@cross_origin()
+def event(id):
+    events = Events.query.filter_by(id=id)
+
+    return events_schema.jsonify(events)
+
+
 @app.route('/')
 def inicio():
     if 'username' in session:
