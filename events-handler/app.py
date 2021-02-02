@@ -185,6 +185,8 @@ def create_event(name, category, place, address, email):
 @app.route('/edit-event/<event_id>/<column>/<new_value>', methods=['GET', 'POST'])
 @cross_origin()
 def edit_event(event_id, column, new_value):
+    email = Events.query.with_entities(Events.user_email).filter_by(id=event_id)
+    user_email = email.scalar()
     if column == "name":
         Events.query.filter_by(id=event_id).update({Events.name: new_value})
     else:
@@ -198,9 +200,20 @@ def edit_event(event_id, column, new_value):
                     Events.query.filter_by(id=event_id).update({Events.address: new_value})
 
     db.session.commit()
-    new_value = Events.query.filter_by(id=event_id)
-    print(new_value)
-    return events_schema.jsonify(new_value)
+    events = Events.query.filter_by(user_email=user_email)
+    return events_schema.jsonify(events)
+
+
+@app.route('/delete-event/<event_id>/', methods=['GET', 'POST'])
+@cross_origin()
+def delete_event(event_id):
+    email = Events.query.with_entities(Events.user_email).filter_by(id=event_id)
+    user_email = email.scalar()
+    Events.query.filter_by(id=event_id).delete()
+    db.session.commit()
+    events = Events.query.filter_by(user_email=user_email)
+    print(events)
+    return events_schema.jsonify(events)
 
 
 @app.route('/')
