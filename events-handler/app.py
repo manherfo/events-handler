@@ -100,6 +100,7 @@ class Events(db.Model):
     place = db.Column(db.String(100))
     address = db.Column(db.String(100))
     user_email = db.Column(db.String(100), db.ForeignKey('users.email'))
+    # created_at = db.Column(db.DateTime(), default=datetime.now())
 
     def __init__(self, id, name, category, place, address, user_email):
         self.id = id
@@ -133,7 +134,6 @@ events_schema = EventSchema(many=True)
 
 @app.route('/signups/<email>/<pwd>', methods=['GET', 'POST'])
 def create_task(email, pwd):
-
     new_user = Users(email, pwd)
 
     db.session.add(new_user)
@@ -180,6 +180,27 @@ def create_event(name, category, place, address, email):
     db.session.commit()
 
     return event_schema.jsonify(lastevent)
+
+
+@app.route('/edit-event/<event_id>/<column>/<new_value>', methods=['GET', 'POST'])
+@cross_origin()
+def edit_event(event_id, column, new_value):
+    if column == "name":
+        Events.query.filter_by(id=event_id).update({Events.name: new_value})
+    else:
+        if column == "category":
+            Events.query.filter_by(id=event_id).update({Events.category: new_value})
+        else:
+            if column == "place":
+                Events.query.filter_by(id=event_id).update({Events.place: new_value})
+            else:
+                if column == "address":
+                    Events.query.filter_by(id=event_id).update({Events.address: new_value})
+
+    db.session.commit()
+    new_value = Events.query.filter_by(id=event_id)
+    print(new_value)
+    return events_schema.jsonify(new_value)
 
 
 @app.route('/')
