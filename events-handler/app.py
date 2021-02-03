@@ -103,13 +103,14 @@ class Events(db.Model):
     user_email = db.Column(db.String(100), db.ForeignKey('users.email'))
     created_at = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
 
-    def __init__(self, id, name, category, place, address, user_email):
+    def __init__(self, id, name, category, place, address, user_email, created_at):
         self.id = id
         self.name = name
         self.category = category
         self.place = place
         self.address = address
         self.user_email = user_email
+        self.created_at = created_at
 
 
 db.create_all()
@@ -126,7 +127,7 @@ users_schema = UserSchema(many=True)
 
 class EventSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'category', 'place', 'address', 'user_email')
+        fields = ('id', 'name', 'category', 'place', 'address', 'user_email', 'created_at')
 
 
 event_schema = EventSchema()
@@ -169,7 +170,7 @@ def validate_users():
 @cross_origin()
 def user_events(email):
     events = Events.query.order_by(Events.created_at.desc()).filter_by(user_email=email)
-
+    print(events)
     return events_schema.jsonify(events)
 
 
@@ -194,7 +195,7 @@ def create_event():
     new_place = request.json['place']
     new_address = request.json['address']
     email = request.json['email']
-    new_event = Events(None, new_name, new_category, new_place, new_address, email)
+    new_event = Events(None, new_name, new_category, new_place, new_address, email, None)
 
     db.session.add(new_event)
     db.session.commit()
