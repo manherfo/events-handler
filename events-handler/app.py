@@ -132,9 +132,11 @@ event_schema = EventSchema()
 events_schema = EventSchema(many=True)
 
 
-@app.route('/signups/<email>/<pwd>', methods=['GET', 'POST'])
-def create_task(email, pwd):
-    new_user = Users(email, pwd)
+@app.route('/signups', methods=['PUT'])
+def create_task():
+    new_email = request.json['email']
+    new_pwd = request.json['pwd']
+    new_user = Users(new_email, new_pwd)
 
     db.session.add(new_user)
     db.session.commit()
