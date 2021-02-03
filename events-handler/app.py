@@ -100,6 +100,7 @@ class Events(db.Model):
     place = db.Column(db.String(100))
     address = db.Column(db.String(100))
     user_email = db.Column(db.String(100), db.ForeignKey('users.email'))
+
     # created_at = db.Column(db.DateTime(), default=datetime.now())
 
     def __init__(self, id, name, category, place, address, user_email):
@@ -144,12 +145,24 @@ def create_task():
     return user_schema.jsonify(new_user)
 
 
-@app.route('/validate-pwds/<email>/<pwd>', methods=['GET', 'POST'])
+@app.route('/validate-pwds', methods=['POST'])
 @cross_origin()
-def validate_users(email, pwd):
-    user = Users.query.get(email)
-    db.session.query_property()
-    return user_schema.jsonify(user)
+def validate_users():
+    print(request.get_json())
+    email_received = request.json['email']
+    pwd_received = request.json['pwd']
+    user_validated = Users.query.with_entities(Users.pwd).filter_by(email=email_received)
+    pwd_validated = user_validated.scalar()
+    response = None
+    print(email_received)
+    print(pwd_received)
+    if pwd_received == pwd_validated:
+        response = Users.query.with_entities(Users.email).filter_by(email=email_received)
+    else:
+        x = [{}]
+    # if pwd
+    # user = Users.query.get(email)
+    return users_schema.jsonify(response)
 
 
 @app.route('/user-events/<email>', methods=['GET', 'POST'])
