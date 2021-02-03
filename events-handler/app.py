@@ -4,6 +4,7 @@ from werkzeug.exceptions import abort
 from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:admin@localhost/events_handler'
@@ -100,8 +101,7 @@ class Events(db.Model):
     place = db.Column(db.String(100))
     address = db.Column(db.String(100))
     user_email = db.Column(db.String(100), db.ForeignKey('users.email'))
-
-    # created_at = db.Column(db.DateTime(), default=datetime.now())
+    created_at = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
 
     def __init__(self, id, name, category, place, address, user_email):
         self.id = id
@@ -168,7 +168,7 @@ def validate_users():
 @app.route('/user-events/<email>', methods=['GET', 'POST'])
 @cross_origin()
 def user_events(email):
-    events = Events.query.filter_by(user_email=email)
+    events = Events.query.order_by(Events.created_at.desc()).filter_by(user_email=email)
 
     return events_schema.jsonify(events)
 
@@ -211,6 +211,7 @@ def edit_event(event_id):
     new_address = request.json['address']
     email = Events.query.with_entities(Events.user_email).filter_by(id=event_id)
     user_email = email.scalar()
+    print(request.get_json())
     Events.query.filter_by(id=event_id).update(
         {
             Events.name: new_name,
