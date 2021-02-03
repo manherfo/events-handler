@@ -166,38 +166,55 @@ def event(id):
     return events_schema.jsonify(events)
 
 
-@app.route('/create-event/<name>/<category>/<place>/<address>/<email>', methods=['GET', 'POST'])
+@app.route('/create-event', methods=['GET', 'POST'])
 @cross_origin()
-def create_event(name, category, place, address, email):
+def create_event():
     # SELECT events.id AS events_id
     # FROM events ORDER BY -events.id
     #  LIMIT %(param_1)s
     # lastevent = Events.query.with_entities(Events.id).order_by(-Events.id).limit(1)
     # print(lastevent.scalar())
-    new_event = Events(None, name, category, place, address, email)
+    new_name = request.json['name']
+    new_category = request.json['category']
+    new_place = request.json['place']
+    new_address = request.json['address']
+    email = request.json['email']
+    new_event = Events(None, new_name, new_category, new_place, new_address, email)
 
     db.session.add(new_event)
     db.session.commit()
 
-    return event_schema.jsonify(lastevent)
+    return event_schema.jsonify(new_event)
 
 
-@app.route('/edit-event/<event_id>/<column>/<new_value>', methods=['GET', 'POST'])
+@app.route('/edit-event/<event_id>', methods=['GET', 'POST'])
 @cross_origin()
-def edit_event(event_id, column, new_value):
+def edit_event(event_id):
+    new_name = request.json['name']
+    new_category = request.json['category']
+    new_place = request.json['place']
+    new_address = request.json['address']
     email = Events.query.with_entities(Events.user_email).filter_by(id=event_id)
     user_email = email.scalar()
-    if column == "name":
-        Events.query.filter_by(id=event_id).update({Events.name: new_value})
-    else:
-        if column == "category":
-            Events.query.filter_by(id=event_id).update({Events.category: new_value})
-        else:
-            if column == "place":
-                Events.query.filter_by(id=event_id).update({Events.place: new_value})
-            else:
-                if column == "address":
-                    Events.query.filter_by(id=event_id).update({Events.address: new_value})
+    Events.query.filter_by(id=event_id).update(
+        {
+            Events.name: new_name,
+            Events.category: new_category,
+            Events.place: new_place,
+            Events.address: new_address
+        }
+    )
+    # if column == "name":
+    #     Events.query.filter_by(id=event_id).update({Events.name: new_value})
+    # else:
+    #     if column == "category":
+    #         Events.query.filter_by(id=event_id).update({Events.category: new_value})
+    #     else:
+    #         if column == "place":
+    #             Events.query.filter_by(id=event_id).update({Events.place: new_value})
+    #         else:
+    #             if column == "address":
+    #                 Events.query.filter_by(id=event_id).update({Events.address: new_value})
 
     db.session.commit()
     events = Events.query.filter_by(user_email=user_email)
